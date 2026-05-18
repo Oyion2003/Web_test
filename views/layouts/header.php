@@ -252,9 +252,28 @@ if (isset($_SESSION['user_id'])) {
             box-shadow: 0 18px 32px rgba(15, 23, 42, 0.1);
         }
 
+        .task-card.overdue-card {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 1px rgba(239,68,68,0.12), 0 18px 32px rgba(15, 23, 42, 0.1);
+        }
+
         .task-card h4 {
             margin: 0 0 0.75rem;
             font-size: 1.05rem;
+        }
+        .activity-avatar {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #e0e7ff;
+            color: #1e40af;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
         }
 
         .task-card p,

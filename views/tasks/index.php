@@ -20,9 +20,9 @@
 </div>
 
 <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:20px;">
-    <span class="badge">To Do: <?= count($todoTasks) ?></span>
-    <span class="badge">In Progress: <?= count($inProgressTasks) ?></span>
-    <span class="badge">Done: <?= count($doneTasks) ?></span>
+        <span class="badge" data-badge-status="todo" data-count="<?= count($todoTasks) ?>">To Do: <?= count($todoTasks) ?></span>
+    <span class="badge" data-badge-status="in-progress" data-count="<?= count($inProgressTasks) ?>">In Progress: <?= count($inProgressTasks) ?></span>
+    <span class="badge" data-badge-status="done" data-count="<?= count($doneTasks) ?>">Done: <?= count($doneTasks) ?></span>
 </div>
 
 <div class="task-board">
@@ -45,27 +45,19 @@
 
                 <?php foreach ($taskList as $task): ?>
                     <?php $dueClass = ($task['due_date'] < date('Y-m-d') && $task['status'] !== 'done') ? 'border-color: #ef4444;' : ''; ?>
-                    <div class="task-card" data-task-id="<?= $task['id'] ?>" data-due-date="<?= $task['due_date'] ?>" style="<?= $dueClass ?>">
+                    <div class="task-card" data-task-id="<?= $task['id'] ?>" data-status="<?= $task['status'] ?>" data-due-date="<?= $task['due_date'] ?>" style="<?= $dueClass ?>">
                         <h4><?= htmlspecialchars($task['title']) ?></h4>
                         <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.9rem; font-size:0.9rem;">
                             <span class="badge-status">Priority: <?= htmlspecialchars(ucfirst($task['priority'])) ?></span>
                             <span class="badge-status">Due: <?= htmlspecialchars($task['due_date']) ?></span>
                             <span class="badge-status">Assignee: <?= htmlspecialchars($task['assignee_name'] ?: 'Unassigned') ?></span>
                         </div>
-                        <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+                        <div class="task-actions" style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
                             <?php if ($statusKey !== 'todo'): ?>
-                                <form method="POST" action="index.php?action=move_task" style="display:inline-block; margin:0;">
-                                    <input type="hidden" name="task_id" value="<?= $task['id'] ?>">
-                                    <input type="hidden" name="status" value="<?= $statusKey === 'in-progress' ? 'todo' : 'in-progress' ?>">
-                                    <button class="button button-secondary" type="submit">←</button>
-                                </form>
+                                <button class="button button-secondary move-left" type="button" data-task-id="<?= $task['id'] ?>" data-status="<?= $statusKey ?>" data-direction="backward">←</button>
                             <?php endif; ?>
                             <?php if ($statusKey !== 'done'): ?>
-                                <form method="POST" action="index.php?action=move_task" style="display:inline-block; margin:0;">
-                                    <input type="hidden" name="task_id" value="<?= $task['id'] ?>">
-                                    <input type="hidden" name="status" value="<?= $statusKey === 'todo' ? 'in-progress' : 'done' ?>">
-                                    <button class="button button-secondary" type="submit">→</button>
-                                </form>
+                                <button class="button button-secondary move-right" type="button" data-task-id="<?= $task['id'] ?>" data-status="<?= $statusKey ?>" data-direction="forward">→</button>
                             <?php endif; ?>
                             <a class="button button-secondary" href="index.php?action=task_detail&id=<?= $task['id'] ?>">View Details</a>
                         </div>
@@ -115,5 +107,140 @@
         </form>
     </div>
 </div>
+
+<script>
+    const statusTransitions = {
+        'todo': {forward: 'in-progress'},
+        'in-progress': {forward: 'done', backward: 'todo'},
+        'done': {backward: 'in-progress'}
+    };
+
+    function getStatusColumn(status) {
+        const index = status === 'todo' ? 1 : status === 'in-progress' ? 2 : 3;
+        return document.querySelector(`.task-board > .task-column:nth-child(${index}) > div`);
+    }
+
+    function renderTaskActions(card, status) {
+        const taskId = card.dataset.taskId;
+        const wrapper = card.querySelector('.task-actions');
+        wrapper.innerHTML = '';
+
+        if (status !== 'todo') {
+            const left = document.createElement('button');
+            left.type = 'button';
+            left.className = 'button button-secondary move-left';
+            left.dataset.taskId = taskId;
+            left.dataset.direction = 'backward';
+            left.dataset.status = status;
+            left.textContent = '←';
+            wrapper.appendChild(left);
+        }
+
+        if (status !== 'done') {
+            const right = document.createElement('button');
+            right.type = 'button';
+            right.className = 'button button-secondary move-right';
+            right.dataset.taskId = taskId;
+            right.dataset.direction = 'forward';
+            right.dataset.status = status;
+            right.textContent = '→';
+            wrapper.appendChild(right);
+        }
+
+        const details = document.createElement('a');
+        details.className = 'button button-secondary';
+        details.href = `index.php?action=task_detail&id=${taskId}`;
+        details.textContent = 'View Details';
+        wrapper.appendChild(details);
+    }
+
+    function updateCounts(fromStatus, toStatus) {
+        const fromBadge = document.querySelector(`[data-badge-status="${fromStatus}"]`);
+        const toBadge = document.querySelector(`[data-badge-status="${toStatus}"]`);
+        if (fromBadge) {
+            const current = parseInt(fromBadge.dataset.count, 10);
+            if (!Number.isNaN(current)) {
+                const next = Math.max(0, current - 1);
+                fromBadge.dataset.count = next;
+                fromBadge.textContent = `${fromStatus === 'todo' ? 'To Do' : fromStatus === 'in-progress' ? 'In Progress' : 'Done'}: ${next}`;
+            }
+        }
+        if (toBadge) {
+            const current = parseInt(toBadge.dataset.count, 10);
+            if (!Number.isNaN(current)) {
+                const next = current + 1;
+                toBadge.dataset.count = next;
+                toBadge.textContent = `${toStatus === 'todo' ? 'To Do' : toStatus === 'in-progress' ? 'In Progress' : 'Done'}: ${next}`;
+            }
+        }
+    }
+
+    function highlightOverdueCards() {
+        const today = new Date().toISOString().split('T')[0];
+        document.querySelectorAll('.task-card').forEach(card => {
+            const status = card.dataset.status;
+            const dueDate = card.dataset.dueDate;
+            card.classList.remove('overdue-card');
+            if (status !== 'done' && dueDate && dueDate < today) {
+                card.classList.add('overdue-card');
+            }
+        });
+    }
+
+    function moveCard(card, newStatus) {
+        const column = getStatusColumn(newStatus);
+        card.dataset.status = newStatus;
+        renderTaskActions(card, newStatus);
+        if (column) {
+            column.appendChild(card);
+        }
+        highlightOverdueCards();
+        attachMoveListeners();
+    }
+
+    function handleMoveClick(event) {
+        const button = event.currentTarget;
+        const taskId = button.dataset.taskId;
+        const currentStatus = button.dataset.status;
+        const direction = button.dataset.direction;
+        const newStatus = statusTransitions[currentStatus]?.[direction];
+        if (!newStatus) {
+            return;
+        }
+
+        fetch('index.php?action=move_task', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ task_id: taskId, status: newStatus, ajax: '1' })
+        })
+        .then(resp => resp.json())
+        .then(data => {
+            if (data.ok) {
+                const card = document.querySelector(`.task-card[data-task-id="${taskId}"]`);
+                if (card) {
+                    moveCard(card, newStatus);
+                    updateCounts(currentStatus, newStatus);
+                }
+            } else {
+                alert(data.error || 'Unable to update task status');
+            }
+        })
+        .catch(() => {
+            alert('Unable to update task status');
+        });
+    }
+
+    function attachMoveListeners() {
+        document.querySelectorAll('.move-left, .move-right').forEach(button => {
+            button.removeEventListener('click', handleMoveClick);
+            button.addEventListener('click', handleMoveClick);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        highlightOverdueCards();
+        attachMoveListeners();
+    });
+</script>
 
 <?php require __DIR__ . '/../layouts/footer.php'; ?>

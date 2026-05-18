@@ -114,6 +114,11 @@ class TaskController {
 
         $taskModel->updateStatus($task_id, $new_status);
         log_activity($task['project_id'], $_SESSION['user_id'], "Task '{$task['title']}' moved to {$new_status}");
+
+        if (!empty($_POST['ajax']) && $_POST['ajax'] === '1') {
+            createJsonResponse(['ok' => true, 'new_status' => $new_status]);
+        }
+
         redirect('index.php?action=tasks&project_id=' . $task['project_id']);
     }
 

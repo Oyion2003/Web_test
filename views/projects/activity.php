@@ -71,8 +71,20 @@ require_once __DIR__ . '/../layouts/header.php';
                         header.style.flexWrap = 'wrap';
                         header.style.gap = '0.75rem';
 
+                        const authorGroup = document.createElement('div');
+                        authorGroup.style.display = 'flex';
+                        authorGroup.style.alignItems = 'center';
+                        authorGroup.style.gap = '0.5rem';
+
+                        const avatar = document.createElement('span');
+                        avatar.className = 'activity-avatar';
+                        avatar.textContent = item.initials || item.user_name.slice(0, 2).toUpperCase();
+
                         const author = document.createElement('strong');
                         author.textContent = item.user_name;
+
+                        authorGroup.appendChild(avatar);
+                        authorGroup.appendChild(author);
 
                         const time = document.createElement('span');
                         time.style.color = '#6b7280';
@@ -83,7 +95,7 @@ require_once __DIR__ . '/../layouts/header.php';
                         actionText.style.marginTop = '0.75rem';
                         actionText.textContent = item.action_text;
 
-                        header.appendChild(author);
+                        header.appendChild(authorGroup);
                         header.appendChild(time);
                         block.appendChild(header);
                         block.appendChild(actionText);
