@@ -1,6 +1,6 @@
 <?php
 
-require_once 'models/BaseModel.php';
+require_once __DIR__ . '/BaseModel.php';
 
 class Task extends BaseModel {
 

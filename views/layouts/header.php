@@ -25,6 +25,8 @@ if (isset($_SESSION['user_id'])) {
     <style>
         :root {
             --bg: #f5f7fb;
+            --bg-alt: #eef2ff;
+            --body-bg: linear-gradient(180deg, #f8fbff 0%, #eef2ff 100%);
             --surface: #ffffff;
             --surface-strong: #f8fafc;
             --border: #e5e7eb;
@@ -35,6 +37,56 @@ if (isset($_SESSION['user_id'])) {
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
+            --button-secondary-bg: #f3f4f6;
+            --button-secondary-text: var(--text);
+            --button-secondary-hover: #e5e7eb;
+            --topbar: rgba(15, 23, 42, 0.95);
+            --topbar-text: #fff;
+            --topbar-link: #d1d5db;
+            --card-muted: #f8fafc;
+            --badge-bg: #eef2ff;
+            --badge-status-bg: #e2e8f0;
+            --input-bg: #fff;
+            --input-border: #e5e7eb;
+            --table-header: #f8fafc;
+            --alert-bg: #fef3f2;
+            --alert-border: #fecaca;
+            --alert-text: #b91c1c;
+            --task-column-bg: #f8fafc;
+            --link-color: var(--primary);
+        }
+
+        html[data-theme="dark"] {
+            --bg: #0b1220;
+            --bg-alt: #111827;
+            --body-bg: linear-gradient(180deg, #020617 0%, #0f172a 100%);
+            --surface: #111827;
+            --surface-strong: #1e293b;
+            --border: #334155;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --primary: #60a5fa;
+            --primary-strong: #38bdf8;
+            --success: #34d399;
+            --danger: #fda4af;
+            --warning: #fbbf24;
+            --button-secondary-bg: #1f2937;
+            --button-secondary-text: #e2e8f0;
+            --button-secondary-hover: rgba(255,255,255,0.12);
+            --topbar: rgba(15, 23, 42, 0.95);
+            --topbar-text: #e2e8f0;
+            --topbar-link: #cbd5e1;
+            --card-muted: #0f172a;
+            --badge-bg: #1e293b;
+            --badge-status-bg: #334155;
+            --input-bg: #0f172a;
+            --input-border: #334155;
+            --table-header: #1f2937;
+            --alert-bg: rgba(248, 113, 113, 0.12);
+            --alert-border: #fca5a5;
+            --alert-text: #fee2e2;
+            --task-column-bg: #111827;
+            --link-color: #60a5fa;
         }
 
         * {
@@ -45,9 +97,10 @@ if (isset($_SESSION['user_id'])) {
             font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(180deg, #f8fbff 0%, #eef2ff 100%);
+            background: var(--body-bg);
             color: var(--text);
             min-height: 100vh;
+            transition: background 0.25s ease, color 0.25s ease;
         }
 
         a {
@@ -87,18 +140,18 @@ if (isset($_SESSION['user_id'])) {
         }
 
         .button-secondary {
-            background: #f3f4f6;
-            color: var(--text);
+            background: var(--button-secondary-bg);
+            color: var(--button-secondary-text);
             padding: 0.75rem 1.25rem;
         }
 
         .button-secondary:hover {
-            background: #e5e7eb;
+            background: var(--button-secondary-hover);
         }
 
         .top-bar {
-            background: rgba(15, 23, 42, 0.95);
-            color: #fff;
+            background: var(--topbar);
+            color: var(--topbar-text);
             padding: 1rem 1.5rem;
             display: flex;
             align-items: center;
@@ -127,7 +180,7 @@ if (isset($_SESSION['user_id'])) {
 
         .top-bar .nav-links a,
         .top-bar .nav-links span {
-            color: #d1d5db;
+            color: var(--topbar-link);
         }
 
         .top-bar .nav-links a:hover {
@@ -135,7 +188,7 @@ if (isset($_SESSION['user_id'])) {
         }
 
         .workspace-switcher {
-            background: #fff;
+            background: var(--surface);
             color: var(--text);
             padding: 0.75rem 1rem;
             border-radius: 999px;
@@ -190,7 +243,7 @@ if (isset($_SESSION['user_id'])) {
         }
 
         .card-muted {
-            background: #f8fafc;
+            background: var(--card-muted);
         }
 
         .badge {
@@ -199,7 +252,7 @@ if (isset($_SESSION['user_id'])) {
             gap: 0.4rem;
             padding: 0.55rem 0.9rem;
             border-radius: 999px;
-            background: #eef2ff;
+            background: var(--badge-bg);
             color: var(--text);
             font-size: 0.9rem;
             font-weight: 600;
@@ -211,7 +264,7 @@ if (isset($_SESSION['user_id'])) {
             gap: 0.35rem;
             padding: 0.45rem 0.8rem;
             border-radius: 999px;
-            background: #e2e8f0;
+            background: var(--badge-status-bg);
             color: var(--text);
             font-size: 0.82rem;
         }
@@ -239,8 +292,8 @@ if (isset($_SESSION['user_id'])) {
         }
 
         .task-card {
-            background: #fff;
-            border: 1px solid #e5e7eb;
+            background: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 1rem;
             padding: 1rem;
             box-shadow: 0 12px 24px rgba(15, 23, 42, 0.05);
@@ -283,8 +336,8 @@ if (isset($_SESSION['user_id'])) {
         }
 
         .task-column {
-            background: #f8fafc;
-            border: 1px solid #e5e7eb;
+            background: var(--task-column-bg);
+            border: 1px solid var(--border);
             border-radius: 1rem;
             padding: 1rem;
             min-height: 360px;
@@ -316,12 +369,12 @@ if (isset($_SESSION['user_id'])) {
         textarea,
         select {
             width: 100%;
-            border: 1px solid var(--border);
+            border: 1px solid var(--input-border);
             border-radius: 0.85rem;
             padding: 0.9rem 1rem;
             font: inherit;
             color: var(--text);
-            background: #fff;
+            background: var(--input-bg);
         }
 
         textarea {
@@ -342,14 +395,14 @@ if (isset($_SESSION['user_id'])) {
         }
 
         th {
-            background: #f8fafc;
+            background: var(--table-header);
             font-weight: 700;
         }
 
         .alert {
-            background: #fef3f2;
-            color: #b91c1c;
-            border: 1px solid #fecaca;
+            background: var(--alert-bg);
+            color: var(--alert-text);
+            border: 1px solid var(--alert-border);
             border-radius: 1rem;
             padding: 1rem;
         }
@@ -364,7 +417,7 @@ if (isset($_SESSION['user_id'])) {
         }
 
         .breadcrumbs a {
-            color: var(--primary);
+            color: var(--link-color);
             text-decoration: none;
         }
 
@@ -389,6 +442,32 @@ if (isset($_SESSION['user_id'])) {
             }
         }
     </style>
+<script>
+    function getStoredTheme() {
+        const stored = localStorage.getItem('taskhub-theme');
+        if (stored === 'light' || stored === 'dark') return stored;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('taskhub-theme', theme);
+        const button = document.getElementById('theme-toggle');
+        if (button) {
+            button.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        applyTheme(getStoredTheme());
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+            });
+        }
+    });
+</script>
 </head>
 <body>
 <div class="top-bar">
@@ -401,7 +480,8 @@ if (isset($_SESSION['user_id'])) {
     <div class="nav-links">
         <?php if (isset($_SESSION['user_id'])): ?>
             <button class="button button-secondary" type="button" onclick="history.back()">Back</button>
-            <span style="color:#d1d5db; font-weight:600;">Hi, <?= htmlspecialchars($_SESSION['name']) ?></span>
+            <button id="theme-toggle" class="button button-secondary" type="button">Theme</button>
+            <span style="color:var(--topbar-link); font-weight:600;">Hi, <?= htmlspecialchars($_SESSION['name']) ?></span>
             <a href="index.php?action=workspace_home">Workspace Home</a>
             <a href="index.php?action=projects">Projects</a>
             <a href="index.php?action=workspace_settings">Workspace Settings</a>
